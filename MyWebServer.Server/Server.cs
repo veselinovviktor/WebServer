@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using MyWebServer.Server.Http;
+using MyWebServer.Server.Routing;
 
 namespace MyWebServer.Server
 {
@@ -13,7 +14,17 @@ namespace MyWebServer.Server
         private readonly int _port;
         private readonly TcpListener _tcpListener;
 
-        public Server(string ipAddres, int port)
+        public Server(Action<IRountingTable> routingTable)
+            : this(2020, routingTable)
+        {
+        }
+
+        public Server(int port, Action<IRountingTable> routingTable)
+            : this("127.0.0.1", port, routingTable)
+        {
+        }
+
+        public Server(string ipAddres, int port, Action<IRountingTable> routingTable)
         {
             _ipAddres = IPAddress.Parse(ipAddres);
             _port = port;

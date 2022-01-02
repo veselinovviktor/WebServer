@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using MyWebServer.Server.Common;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MyWebServer.Server.Http
 {
-    public class HttpHeaderCollection
+    public class HttpHeaderCollection : IEnumerable<HttpHeader>
     {
         private readonly Dictionary<string, HttpHeader> _headers;
 
@@ -13,12 +15,20 @@ namespace MyWebServer.Server.Http
 
         public int Count => _headers.Count;
 
-        internal void Add(HttpHeader httpHeader)
+        public void Add(string name, string value)
         {
-            if (!_headers.ContainsKey(httpHeader.Name))
+            Guard.AgainstNull(name, "name");
+            Guard.AgainstNull(value, "value");
+
+            if (!_headers.ContainsKey(name))
             {
-                _headers.Add(httpHeader.Name, httpHeader);
+                _headers.Add(name, new HttpHeader(name, value));
             }
         }
+
+        public IEnumerator<HttpHeader> GetEnumerator() => _headers.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     }
 }

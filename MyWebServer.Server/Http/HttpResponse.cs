@@ -1,18 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Text;
 
 namespace MyWebServer.Server.Http
 {
-    internal class HttpResponse
+    public abstract class HttpResponse
     {
-        public HttpResponse()
+        protected HttpResponse(HttpStatusCode statusCode)
         {
             Headers = new HttpHeaderCollection();
+            Headers.Add("Server", "My Web Server");
+            Headers.Add("Date:", $"{DateTime.UtcNow.ToString("r")}");
+            StatusCode = statusCode;
         }
 
-        public HttpStatusCode StatusCode { get; private set; }
+        protected HttpStatusCode StatusCode { get; set; }
+        protected HttpHeaderCollection Headers { get; set; }
+        protected string Content { get; set; }
 
-        public HttpHeaderCollection Headers { get; }
+        public override string ToString()
+        {
+            var result = new StringBuilder();
 
-        public string Body { get; private set; }
+            result.AppendLine($"HTTP / 1.1 {(int)StatusCode} {StatusCode}");
+
+            foreach (var header in Headers)
+            {
+                result.AppendLine(header.ToString());
+            }
+
+            result.AppendLine();
+
+            result.AppendLine(Content);
+
+            return result.ToString();
+        }
     }
 }

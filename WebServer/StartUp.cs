@@ -1,4 +1,5 @@
 ﻿using MyWebServer.Server;
+using MyWebServer.Server.Responses;
 using System.Threading.Tasks;
 
 namespace WebServer
@@ -7,7 +8,7 @@ namespace WebServer
     {
         public static async Task Main()
         {
-            var server = new Server("127.0.0.1", 2020);
+            var server = new Server(routes => routes.Map("/", new TextResponse("")));
             await server.Start();
         }
     }
