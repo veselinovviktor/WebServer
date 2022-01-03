@@ -8,27 +8,29 @@ using MyWebServer.Server.Routing;
 
 namespace MyWebServer.Server
 {
-    public class Server
+    public class HttpServer
     {
         private readonly IPAddress _ipAddres;
         private readonly int _port;
         private readonly TcpListener _tcpListener;
+        private readonly IRountingTable _routingTable;
 
-        public Server(Action<IRountingTable> routingTable)
+        public HttpServer(Action<IRountingTable> routingTable)
             : this(2020, routingTable)
         {
         }
 
-        public Server(int port, Action<IRountingTable> routingTable)
+        public HttpServer(int port, Action<IRountingTable> routingTable)
             : this("127.0.0.1", port, routingTable)
         {
         }
 
-        public Server(string ipAddres, int port, Action<IRountingTable> routingTable)
+        public HttpServer(string ipAddres, int port, Action<IRountingTable> routingTableConfiguration)
         {
             _ipAddres = IPAddress.Parse(ipAddres);
             _port = port;
             _tcpListener = new TcpListener(_ipAddres, port);
+            routingTableConfiguration(_routingTable = new RoutingTable());
         }
 
         public async Task Start()
@@ -45,7 +47,8 @@ namespace MyWebServer.Server
                 string requestText = await ReadRequest(networkStream);
                 var request = HttpRequest.Parse(requestText);
 
-                await WriteResponse(networkStream);
+                var response = _routingTable.ExecuteRequest(request);
+                await WriteResponse(networkStream, response);
 
                 connection.Close();
             }
@@ -66,18 +69,11 @@ namespace MyWebServer.Server
             return requestBuilder.ToString();
         }
 
-        private async Task WriteResponse(NetworkStream networkStream)
+        private static async Task WriteResponse(
+            NetworkStream networkStream,
+            HttpResponse response)
         {
-            var content = "<h1>Здравей</h1>";
-            var contentLength = Encoding.UTF8.GetByteCount(content);
-            var response = $@"HTTP/1.1 200 OK
-Server: My Web Server
-Date: {DateTime.UtcNow.ToString("r")}
-Content-Length:{contentLength}
-Content-Type: text/html; charset=UTF-8
-
-{content}";
-            var responseBytes = Encoding.UTF8.GetBytes(response);
+            var responseBytes = Encoding.UTF8.GetBytes(response.ToString());
 
             await networkStream.WriteAsync(responseBytes);
         }

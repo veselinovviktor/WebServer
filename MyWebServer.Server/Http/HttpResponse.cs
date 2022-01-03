@@ -9,7 +9,7 @@ namespace MyWebServer.Server.Http
         {
             Headers = new HttpHeaderCollection();
             Headers.Add("Server", "My Web Server");
-            Headers.Add("Date:", $"{DateTime.UtcNow.ToString("r")}");
+            Headers.Add("Date:", $"{DateTime.UtcNow:r}");
             StatusCode = statusCode;
         }
 

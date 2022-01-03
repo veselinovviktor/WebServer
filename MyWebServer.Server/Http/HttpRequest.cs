@@ -9,8 +9,8 @@ namespace MyWebServer.Server.Http
         private const string NewLine = "\r\n";
         public HttpMethod HttpMethod { get; private set; }
 
-        public string Url { get; private set; }
-
+        public string Path { get; private set; }
+        public Dictionary<string, string> Query { get; set; }
         public HttpHeaderCollection Headers { get; private set; }
 
         public string Body { get; set; }
@@ -22,6 +22,7 @@ namespace MyWebServer.Server.Http
             var startLine = lines.First().Split(new char[] { ' ' });
             var requestMethod = ParseHttpMethod(startLine[0]);
             string url = startLine[1];
+            var (path, query) = ParseUrl(url);
             var headerLines = lines.Skip(1);
             var headers = ParseHttpHeaderCollection(headerLines);
 
@@ -30,9 +31,10 @@ namespace MyWebServer.Server.Http
             return new HttpRequest()
             {
                 HttpMethod = requestMethod,
-                Url = url,
+                Path = path,
                 Body = body,
-                Headers = headers
+                Headers = headers,
+                Query = query
             };
         }
 
@@ -53,6 +55,21 @@ namespace MyWebServer.Server.Http
                 _ => throw new ArgumentException($"Method '{method}' is not supported!"),
             };
         }
+
+        private static (string path, Dictionary<string, string> query) ParseUrl(string url)
+        {
+            var urlParts = url.Split(new char[] { '?' });
+            var path = urlParts[0];
+            var query = urlParts.Length > 1 ? ParseQuery(urlParts[1]) : new Dictionary<string, string>();
+
+            return (path, query);
+        }
+
+        private static Dictionary<string, string> ParseQuery(string queryString)
+            => queryString.Split('&')
+                    .Select(part => part.Split('='))
+                    .Where(part => part.Length == 2)
+                    .ToDictionary(part => part[0], part => part[1]);
 
         private static HttpHeaderCollection ParseHttpHeaderCollection(IEnumerable<string> headerLines)
         {

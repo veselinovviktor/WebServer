@@ -8,7 +8,7 @@ namespace WebServer
     {
         public static async Task Main()
         {
-            var server = new Server(routes => routes.Map("/", new TextResponse("")));
+            var server = new HttpServer(routes => routes.MapGet("/Cats", new TextResponse("")));
             await server.Start();
         }
     }
