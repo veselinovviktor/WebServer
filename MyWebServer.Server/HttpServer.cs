@@ -13,19 +13,19 @@ namespace MyWebServer.Server
         private readonly IPAddress _ipAddres;
         private readonly int _port;
         private readonly TcpListener _tcpListener;
-        private readonly IRountingTable _routingTable;
+        private readonly IRoutingTable _routingTable;
 
-        public HttpServer(Action<IRountingTable> routingTable)
+        public HttpServer(Action<IRoutingTable> routingTable)
             : this(2020, routingTable)
         {
         }
 
-        public HttpServer(int port, Action<IRountingTable> routingTable)
+        public HttpServer(int port, Action<IRoutingTable> routingTable)
             : this("127.0.0.1", port, routingTable)
         {
         }
 
-        public HttpServer(string ipAddres, int port, Action<IRountingTable> routingTableConfiguration)
+        public HttpServer(string ipAddres, int port, Action<IRoutingTable> routingTableConfiguration)
         {
             _ipAddres = IPAddress.Parse(ipAddres);
             _port = port;

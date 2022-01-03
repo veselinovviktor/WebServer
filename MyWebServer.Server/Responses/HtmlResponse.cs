@@ -1,8 +1,8 @@
 ﻿namespace MyWebServer.Server.Responses
 {
-    public class HtmlReponse : ContentResponse
+    public class HtmlResponse : ContentResponse
     {
-        public HtmlReponse(string text)
+        public HtmlResponse(string text)
             : base(text, "text/html; charset=UTF-8")
         {
         }

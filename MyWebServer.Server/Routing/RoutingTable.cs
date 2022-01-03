@@ -33,7 +33,7 @@ namespace MyWebServer.Server.Routing
             Guard.AgainstNull(path, nameof(path));
             Guard.AgainstNull(responseFunction, nameof(responseFunction));
 
-            this.routes[method][path] = responseFunction;
+            this.routes[method][path.ToLower()] = responseFunction;
 
             return this;
         }

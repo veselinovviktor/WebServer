@@ -1,14 +1,16 @@
 ﻿using MyWebServer.Server;
-using MyWebServer.Server.Responses;
 using System.Threading.Tasks;
+using WebServer.Controllers;
+using MyWebServer.Server.Controllers;
 
 namespace WebServer
 {
-    internal class StartUp
+    public class StartUp
     {
         public static async Task Main()
         {
-            var server = new HttpServer(routes => routes.MapGet("/Cats", new TextResponse("")));
+            var server = new HttpServer(routes => routes
+            .MapGet<HomeController>("/softuni", c => c.ToYoutube()));
             await server.Start();
         }
     }

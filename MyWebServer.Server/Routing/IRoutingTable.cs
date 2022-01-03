@@ -3,12 +3,19 @@ using System;
 
 namespace MyWebServer.Server.Routing
 {
-    public interface IRountingTable
+    public interface IRoutingTable
     {
-        IRountingTable Map(HttpMethod method, string path, HttpResponse response);
-        IRountingTable MapGet(string path, HttpResponse response);
-        IRountingTable MapGet(string path, Func<HttpRequest, HttpResponse> responseFunction);
-        HttpResponse ExecuteRequest(HttpRequest request);
+        IRoutingTable Map(HttpMethod method, string path, HttpResponse response);
 
+        IRoutingTable Map(HttpMethod method, string path, Func<HttpRequest, HttpResponse> responseFunction);
+
+        IRoutingTable MapGet(string path, HttpResponse response);
+
+        IRoutingTable MapGet(string path, Func<HttpRequest, HttpResponse> responseFunction);
+
+        IRoutingTable MapPost(string path, HttpResponse response);
+
+        IRoutingTable MapPost(string path, Func<HttpRequest, HttpResponse> responseFunction);
+        HttpResponse ExecuteRequest(HttpRequest request);
     }
 }
